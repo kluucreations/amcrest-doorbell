@@ -17,7 +17,6 @@ def lines(ret):
 def main():
     with open('build', 'r') as f:
         print(f.read())
-    return
     pushover_token =  os.getenv('PUSHOVER_TOKEN')
     pushover_group = os.getenv('PUSHOVER_GROUP')
 

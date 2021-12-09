@@ -10,4 +10,4 @@ build_latest:
 push_latest:
 	docker push kluuvto/amcrest-doorbell:latest
 
-build_push: build_latest push_latest
+build_push: tag build_latest push_latest
