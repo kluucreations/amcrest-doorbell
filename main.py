@@ -15,6 +15,9 @@ def lines(ret):
 
 
 def main():
+    with open('build', 'r') as f:
+        print(f.read())
+    return
     pushover_token =  os.getenv('PUSHOVER_TOKEN')
     pushover_group = os.getenv('PUSHOVER_GROUP')
 
@@ -24,6 +27,17 @@ def main():
     pswd = os.getenv('DOORBELL_PWD')
     msg = os.getenv('PUSH_MESSAGE', 'Someone is at the Front Door')
 
+    relay_url = os.getenv('RELAY_URL', '')
+    pushover_payload = {
+        'token': pushover_token,
+        'user': pushover_group,
+        'message': msg
+    }
+    relay_payload = {
+        'command': msg,
+        'user': 'kluuvto',
+        'broadcast': True
+    }
     cam = Http(host, port, user, pswd, retries_connection=5, timeout_protocol=3.05)
     print("Connected")
     ret = cam.command(
@@ -35,11 +49,9 @@ def main():
         for line in lines(ret):
             if "Invite" in line:
                 print("Doorbell Event Received")
-                requests.post(PUSHOVER_POST_URL, data = {
-                    'token': pushover_token,
-                    'user': pushover_group,
-                    'message': msg
-                })
+                requests.post(PUSHOVER_POST_URL, data = pushover_payload)
+                if relay_url != '':
+                    requests.post(relay_url, data = relay_payload)
 
     except KeyboardInterrupt:
         ret.close()
